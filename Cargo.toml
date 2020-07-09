@@ -1,0 +1,11 @@
+[package]
+name = "gaps"
+version = "0.0.0"
+authors = ["Daniel Mueller <deso@posteo.net>"]
+edition = "2018"
+license = "GPL-3.0-or-later"
+homepage = "https://github.com/d-e-s-o/gaps"
+repository = "https://github.com/d-e-s-o/gaps.git"
+
+[dev-dependencies]
+maplit = "1.0"
