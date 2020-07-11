@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 mod bounds;
+mod gaps;
 mod inc;
 
+pub use crate::gaps::Gappable;
 pub use crate::inc::Inc;
