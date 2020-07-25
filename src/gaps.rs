@@ -25,6 +25,8 @@ pub struct GapIter<I, T> {
   start: Bound<T>,
   /// The end of the range to iterate over.
   end: Bound<T>,
+  #[cfg(debug_assertions)]
+  last: Option<T>,
 }
 
 impl<'i, I, T> GapIter<I, T>
@@ -39,6 +41,8 @@ where
       iter: Some(iter),
       start,
       end,
+      #[cfg(debug_assertions)]
+      last: None,
     }
   }
 }
@@ -55,6 +59,15 @@ where
       match self.iter.as_mut() {
         Some(iter) => {
           let (start, end) = if let Some(this) = iter.next() {
+            debug_assert!(
+              self.last.unwrap_or(*this) <= *this,
+              "sequence is not ascending"
+            );
+            #[cfg(debug_assertions)]
+            {
+              self.last = Some(*this);
+            }
+
             let end = Excluded(*this);
             if self.start != Unbounded && start_le_start(&Included(*this), &self.start) {
               // As long as our current element is still less than or
@@ -136,5 +149,19 @@ where
   {
     let (start, end) = bounds(&range);
     GapIter::new(self, start, end)
+  }
+}
+
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+
+  #[test]
+  #[cfg(debug_assertions)]
+  #[should_panic(expected = "sequence is not ascending")]
+  fn panic_when_non_ascending() {
+    let _ = vec![1, 2, 1, 4, 5].iter().gaps(..).for_each(|_| ());
   }
 }
