@@ -6,6 +6,10 @@ edition = "2018"
 license = "GPL-3.0-or-later"
 homepage = "https://github.com/d-e-s-o/gaps"
 repository = "https://github.com/d-e-s-o/gaps.git"
+readme = "README.md"
+description = """
+Functionality for working with gaps/holes in ordered sequences of values.
+"""
 
 [dev-dependencies]
 maplit = "1.0"
