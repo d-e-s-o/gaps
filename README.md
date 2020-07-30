@@ -5,6 +5,7 @@ gaps
 ====
 
 - [Documentation][docs-rs]
+- [Changelog](CHANGELOG.md)
 
 A crate providing functionality for working with gaps/holes in ordered
 sequences of values.

@@ -1,13 +1,16 @@
 // Copyright (C) 2020 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::ops::Bound::Excluded;
 use std::ops::Bound::Included;
 use std::ops::Bound::Unbounded;
 
 use gaps::Gappable as _;
+use gaps::RangeGappable as _;
 
+use maplit::btreemap;
 use maplit::btreeset;
 
 
@@ -201,6 +204,29 @@ fn set_gap_iteration_3() {
       (Unbounded, Excluded(1)),
       (Excluded(2), Excluded(4)),
       (Excluded(4), Unbounded)
+    ]
+  );
+}
+
+#[test]
+fn range_based_gap_iteration() {
+  let mut r = BTreeMap::<usize, &str>::new();
+  assert_eq!(
+    r.gaps(0..=0).collect::<Vec<_>>(),
+    vec![(Included(0), Included(0))]
+  );
+
+  r.extend(btreemap! { 1 => "foo", 99 => "bar" });
+  assert_eq!(
+    r.gaps(0..2).collect::<Vec<_>>(),
+    vec![(Included(0), Excluded(1))]
+  );
+  assert_eq!(
+    r.gaps(0..).collect::<Vec<_>>(),
+    vec![
+      (Included(0), Excluded(1)),
+      (Excluded(1), Excluded(99)),
+      (Excluded(99), Unbounded),
     ]
   );
 }

@@ -6,4 +6,5 @@ mod gaps;
 mod inc;
 
 pub use crate::gaps::Gappable;
+pub use crate::gaps::RangeGappable;
 pub use crate::inc::Inc;

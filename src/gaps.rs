@@ -1,6 +1,11 @@
 // Copyright (C) 2020 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use std::collections::btree_map::Range as BTreeMapRange;
+use std::collections::btree_set::Range as BTreeSetRange;
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use std::iter::Map;
 use std::ops::Bound;
 use std::ops::Bound::Excluded;
 use std::ops::Bound::Included;
@@ -149,6 +154,71 @@ where
   {
     let (start, end) = bounds(&range);
     GapIter::new(self, start, end)
+  }
+}
+
+
+/// An extension trait that provides range based access to the "gaps" in
+/// collections with a `range` method.
+///
+/// `BTreeSet` and `BTreeMap` are the two most prominent examples of
+/// such collections.
+///
+/// ```rust
+/// use std::ops::Bound;
+/// # use maplit::btreeset;
+/// # use gaps::RangeGappable as _;
+///
+/// let set = btreeset!{1, 3, 4};
+/// let mut gaps = set.gaps(0..=6);
+/// assert_eq!(gaps.next(), Some((Bound::Included(0), Bound::Excluded(1))));
+/// assert_eq!(gaps.next(), Some((Bound::Excluded(1), Bound::Excluded(3))));
+/// assert_eq!(gaps.next(), Some((Bound::Excluded(4), Bound::Included(6))));
+/// assert_eq!(gaps.next(), None);
+/// ```
+pub trait RangeGappable<'s, T> {
+  type Iter;
+
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, T>
+  where
+    R: RangeBounds<T>;
+}
+
+impl<'s, V> RangeGappable<'s, V> for BTreeSet<V>
+where
+  V: Copy + Ord + Inc + 's,
+{
+  type Iter = BTreeSetRange<'s, V>;
+
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, V>
+  where
+    R: RangeBounds<V>,
+  {
+    let (start, end) = bounds(&range);
+    let range = self.range(range);
+    GapIter::new(range, start, end)
+  }
+}
+
+
+impl<'s, K, V> RangeGappable<'s, K> for BTreeMap<K, V>
+where
+  K: Copy + Ord + Inc + 's,
+  V: 's,
+{
+  type Iter = Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>;
+
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, K>
+  where
+    R: RangeBounds<K>,
+  {
+    fn map<I, J>(x: (I, J)) -> I {
+      x.0
+    }
+
+    let (start, end) = bounds(&range);
+    let range = self.range(range).map(map as _);
+    GapIter::new(range, start, end)
   }
 }
 
