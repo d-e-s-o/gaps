@@ -7,6 +7,7 @@ use std::ops::Bound::Excluded;
 use std::ops::Bound::Included;
 use std::ops::Bound::Unbounded;
 
+use gaps::range::bounds;
 use gaps::Gappable as _;
 use gaps::RangeGappable as _;
 
@@ -229,4 +230,25 @@ fn range_based_gap_iteration() {
       (Excluded(99), Unbounded),
     ]
   );
+}
+
+#[test]
+fn extract_bounds() {
+  assert_eq!(bounds(&(2..=5)), (Included(2), Included(5)));
+  assert_eq!(bounds(&(1..4)), (Included(1), Excluded(4)));
+  assert_eq!(bounds(&(42..)), (Included(42), Unbounded));
+
+  assert_eq!(
+    bounds(&(Excluded(2), Included(5))),
+    (Excluded(2), Included(5))
+  );
+  assert_eq!(
+    bounds(&(Excluded(1), Excluded(4))),
+    (Excluded(1), Excluded(4))
+  );
+  assert_eq!(bounds(&(Excluded(8), Unbounded)), (Excluded(8), Unbounded));
+
+  assert_eq!(bounds(&(..=5)), (Unbounded, Included(5)));
+  assert_eq!(bounds(&(..4)), (Unbounded, Excluded(4)));
+  assert_eq!(bounds::<_, u8>(&(..)), (Unbounded, Unbounded));
 }

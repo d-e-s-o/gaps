@@ -8,3 +8,7 @@ mod inc;
 pub use crate::gaps::Gappable;
 pub use crate::gaps::RangeGappable;
 pub use crate::inc::Inc;
+
+pub mod range {
+  pub use crate::bounds::bounds;
+}

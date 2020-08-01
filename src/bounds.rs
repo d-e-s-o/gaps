@@ -78,9 +78,9 @@ where
 }
 
 
-/// Extract the bounds from a range, cloning the inner values.
+/// Extract the bounds from a range, copying the inner values.
 // TODO: This function should use `Bound::cloned` once it is stable.
-pub(crate) fn bounds<R, T>(range: &R) -> (Bound<T>, Bound<T>)
+pub fn bounds<R, T>(range: &R) -> (Bound<T>, Bound<T>)
 where
   R: RangeBounds<T>,
   T: Copy,
@@ -213,26 +213,5 @@ mod tests {
     assert!(!end_lt_end(&Unbounded, &Included(2)));
     assert!(!end_lt_end(&Unbounded, &Excluded(2)));
     assert!(!end_lt_end::<u8>(&Unbounded, &Unbounded));
-  }
-
-  #[test]
-  fn extract_bounds() {
-    assert_eq!(bounds(&(2..=5)), (Included(2), Included(5)));
-    assert_eq!(bounds(&(1..4)), (Included(1), Excluded(4)));
-    assert_eq!(bounds(&(42..)), (Included(42), Unbounded));
-
-    assert_eq!(
-      bounds(&(Excluded(2), Included(5))),
-      (Excluded(2), Included(5))
-    );
-    assert_eq!(
-      bounds(&(Excluded(1), Excluded(4))),
-      (Excluded(1), Excluded(4))
-    );
-    assert_eq!(bounds(&(Excluded(8), Unbounded)), (Excluded(8), Unbounded));
-
-    assert_eq!(bounds(&(..=5)), (Unbounded, Included(5)));
-    assert_eq!(bounds(&(..4)), (Unbounded, Excluded(4)));
-    assert_eq!(bounds::<_, u8>(&(..)), (Unbounded, Unbounded));
   }
 }
