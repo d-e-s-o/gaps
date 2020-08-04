@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.1.1
+-----
 - Introduced `RangeGappable` trait for collections with `range` method
 - Exported `bounds` function for extracting the bounds of a range
 
