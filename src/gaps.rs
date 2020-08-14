@@ -206,6 +206,7 @@ where
   K: Copy + Ord + Inc + 's,
   V: 's,
 {
+  #[allow(clippy::type_complexity)]
   type Iter = Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>;
 
   fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, K>
@@ -232,6 +233,6 @@ mod tests {
   #[cfg(debug_assertions)]
   #[should_panic(expected = "sequence is not ascending")]
   fn panic_when_non_ascending() {
-    let _ = vec![1, 2, 1, 4, 5].iter().gaps(..).for_each(|_| ());
+    vec![1, 2, 1, 4, 5].iter().gaps(..).for_each(|_| ());
   }
 }

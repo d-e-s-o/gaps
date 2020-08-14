@@ -50,7 +50,7 @@ mod tests {
 
     assert_eq!(inc(1u8), 2);
     assert_eq!(inc(-1i16), 0);
-    assert_eq!(inc(129012u32), 129013);
+    assert_eq!(inc(129_012u32), 129_013);
     assert_eq!(inc(42usize), 43);
   }
 }
