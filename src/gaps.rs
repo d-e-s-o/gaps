@@ -5,6 +5,7 @@ use std::collections::btree_map::Range as BTreeMapRange;
 use std::collections::btree_set::Range as BTreeSetRange;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use std::iter::Copied;
 use std::iter::Map;
 use std::ops::Bound;
 use std::ops::Bound::Excluded;
@@ -34,10 +35,10 @@ pub struct GapIter<I, T> {
   last: Option<T>,
 }
 
-impl<'i, I, T> GapIter<I, T>
+impl<I, T> GapIter<I, T>
 where
-  I: Iterator<Item = &'i T>,
-  T: Copy + Ord + Inc + 'i,
+  I: Iterator<Item = T>,
+  T: Copy + Ord + Inc,
 {
   fn new(iter: I, start: Bound<T>, end: Bound<T>) -> Self {
     debug_assert!(start_le_end(&start, &end));
@@ -52,10 +53,10 @@ where
   }
 }
 
-impl<'i, I, T> Iterator for GapIter<I, T>
+impl<I, T> Iterator for GapIter<I, T>
 where
-  I: Iterator<Item = &'i T>,
-  T: Copy + Ord + Inc + 'i,
+  I: Iterator<Item = T>,
+  T: Copy + Ord + Inc,
 {
   type Item = (Bound<T>, Bound<T>);
 
@@ -65,20 +66,20 @@ where
         Some(iter) => {
           let (start, end) = if let Some(this) = iter.next() {
             debug_assert!(
-              self.last.unwrap_or(*this) <= *this,
+              self.last.unwrap_or(this) <= this,
               "sequence is not ascending"
             );
             #[cfg(debug_assertions)]
             {
-              self.last = Some(*this);
+              self.last = Some(this);
             }
 
-            let end = Excluded(*this);
-            if self.start != Unbounded && start_le_start(&Included(*this), &self.start) {
+            let end = Excluded(this);
+            if self.start != Unbounded && start_le_start(&Included(this), &self.start) {
               // As long as our current element is still less than or
               // even equal to the actual start of the range that we
               // consider, we just continue.
-              if !start_lt_start(&Included(*this), &self.start) {
+              if !start_lt_start(&Included(this), &self.start) {
                 // But if it is equal to the start bound then we adjust
                 // the start bound to exclude this element.
                 self.start = end;
@@ -131,22 +132,22 @@ where
 /// # use gaps::Gappable as _;
 ///
 /// let vec = vec![1, 3, 4];
-/// let mut gaps = vec.iter().gaps(0..=6);
+/// let mut gaps = vec.iter().copied().gaps(0..=6);
 /// assert_eq!(gaps.next(), Some((Bound::Included(0), Bound::Excluded(1))));
 /// assert_eq!(gaps.next(), Some((Bound::Excluded(1), Bound::Excluded(3))));
 /// assert_eq!(gaps.next(), Some((Bound::Excluded(4), Bound::Included(6))));
 /// assert_eq!(gaps.next(), None);
 /// ```
-pub trait Gappable<'s, I, T> {
+pub trait Gappable<I, T> {
   fn gaps<R>(self, range: R) -> GapIter<I, T>
   where
     R: RangeBounds<T>;
 }
 
-impl<'s, I, T> Gappable<'s, I, T> for I
+impl<I, T> Gappable<I, T> for I
 where
-  I: Iterator<Item = &'s T>,
-  T: Copy + Ord + Inc + 's,
+  I: Iterator<Item = T>,
+  T: Copy + Ord + Inc,
 {
   fn gaps<R>(self, range: R) -> GapIter<I, T>
   where
@@ -179,7 +180,7 @@ where
 pub trait RangeGappable<'s, T> {
   type Iter;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, T>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, T>
   where
     R: RangeBounds<T>;
 }
@@ -190,12 +191,12 @@ where
 {
   type Iter = BTreeSetRange<'s, V>;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, V>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, V>
   where
     R: RangeBounds<V>,
   {
     let (start, end) = bounds(&range);
-    let range = self.range(range);
+    let range = self.range(range).copied();
     GapIter::new(range, start, end)
   }
 }
@@ -209,7 +210,7 @@ where
   #[allow(clippy::type_complexity)]
   type Iter = Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, K>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, K>
   where
     R: RangeBounds<K>,
   {
@@ -218,7 +219,7 @@ where
     }
 
     let (start, end) = bounds(&range);
-    let range = self.range(range).map(map as _);
+    let range = self.range(range).map(map as _).copied();
     GapIter::new(range, start, end)
   }
 }
@@ -233,6 +234,10 @@ mod tests {
   #[cfg(debug_assertions)]
   #[should_panic(expected = "sequence is not ascending")]
   fn panic_when_non_ascending() {
-    vec![1, 2, 1, 4, 5].iter().gaps(..).for_each(|_| ());
+    vec![1, 2, 1, 4, 5]
+      .iter()
+      .copied()
+      .gaps(..)
+      .for_each(|_| ());
   }
 }
