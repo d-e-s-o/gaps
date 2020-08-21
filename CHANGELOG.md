@@ -1,5 +1,6 @@
 Unreleased
 ----------
+- Bumped minimum required Rust version to `1.36.0`
 - Enabled CI pipeline comprising building, testing, linting, and
   coverage collection of the project
   - Added badges indicating pipeline status and code coverage percentage
