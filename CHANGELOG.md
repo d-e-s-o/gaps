@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.2.0
+-----
 - Changed `GapIter` to assume non-reference types in wrapped iterator
 - Bumped minimum required Rust version to `1.36.0`
 - Enabled CI pipeline comprising building, testing, linting, and
