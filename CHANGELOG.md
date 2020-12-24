@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Fixed compile time failure on release builds
+
+
 0.2.0
 -----
 - Changed `GapIter` to assume non-reference types in wrapped iterator

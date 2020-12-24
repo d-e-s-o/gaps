@@ -65,12 +65,12 @@ where
       match self.iter.as_mut() {
         Some(iter) => {
           let (start, end) = if let Some(this) = iter.next() {
-            debug_assert!(
-              self.last.unwrap_or(this) <= this,
-              "sequence is not ascending"
-            );
             #[cfg(debug_assertions)]
             {
+              debug_assert!(
+                self.last.unwrap_or(this) <= this,
+                "sequence is not ascending"
+              );
               self.last = Some(this);
             }
 
