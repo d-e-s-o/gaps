@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.2.1
+-----
 - Fixed compile time failure on release builds
 
 
