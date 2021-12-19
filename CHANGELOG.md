@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Made `GapIter` publicly accessible
+
+
 0.2.1
 -----
 - Fixed compile time failure on release builds
