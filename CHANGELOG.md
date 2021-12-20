@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.2.2
+-----
 - Made `GapIter` publicly accessible
 
 
