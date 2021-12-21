@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.2.3
+-----
 - Exported `GapIter::new` constructor
 
 
