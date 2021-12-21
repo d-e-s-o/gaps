@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Exported `GapIter::new` constructor
+
+
 0.2.2
 -----
 - Made `GapIter` publicly accessible

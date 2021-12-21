@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2021 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use std::collections::btree_map::Range as BTreeMapRange;
@@ -40,7 +40,7 @@ where
   I: Iterator<Item = T>,
   T: Copy + Ord + Inc,
 {
-  fn new(iter: I, start: Bound<T>, end: Bound<T>) -> Self {
+  pub fn new(iter: I, start: Bound<T>, end: Bound<T>) -> Self {
     debug_assert!(start_le_end(&start, &end));
 
     Self {
