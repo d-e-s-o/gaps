@@ -180,7 +180,7 @@ where
 pub trait RangeGappable<'s, T> {
   type Iter;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, T>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, T>
   where
     R: RangeBounds<T>;
 }
@@ -189,9 +189,9 @@ impl<'s, V> RangeGappable<'s, V> for BTreeSet<V>
 where
   V: Copy + Ord + Inc + 's,
 {
-  type Iter = BTreeSetRange<'s, V>;
+  type Iter = Copied<BTreeSetRange<'s, V>>;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, V>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, V>
   where
     R: RangeBounds<V>,
   {
@@ -208,9 +208,9 @@ where
   V: 's,
 {
   #[allow(clippy::type_complexity)]
-  type Iter = Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>;
+  type Iter = Copied<Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>>;
 
-  fn gaps<R>(&'s self, range: R) -> GapIter<Copied<Self::Iter>, K>
+  fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, K>
   where
     R: RangeBounds<K>,
   {

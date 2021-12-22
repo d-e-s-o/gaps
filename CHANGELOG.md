@@ -1,3 +1,9 @@
+Unreleased
+----------
+- Moved `Copied` type from `RangeGappable::gaps` return type to
+  `RangeGappable::Iter` associated type
+
+
 0.2.3
 -----
 - Exported `GapIter::new` constructor
