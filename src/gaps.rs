@@ -208,18 +208,21 @@ where
   V: 's,
 {
   #[allow(clippy::type_complexity)]
-  type Iter = Copied<Map<BTreeMapRange<'s, K, V>, fn((&'s K, &'s V)) -> &'s K>>;
+  type Iter = Map<BTreeMapRange<'s, K, V>, fn((&'_ K, &'_ V)) -> K>;
 
   fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, K>
   where
     R: RangeBounds<K>,
   {
-    fn map<I, J>(x: (I, J)) -> I {
-      x.0
+    fn map<I, J>(x: (&I, &J)) -> I
+    where
+      I: Copy,
+    {
+      *x.0
     }
 
     let (start, end) = bounds(&range);
-    let range = self.range(range).map(map as _).copied();
+    let range = self.range(range).map(map as _);
     GapIter::new(range, start, end)
   }
 }

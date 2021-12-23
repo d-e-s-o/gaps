@@ -2,6 +2,8 @@ Unreleased
 ----------
 - Moved `Copied` type from `RangeGappable::gaps` return type to
   `RangeGappable::Iter` associated type
+- Fixed "implementation of `FnOnce` is not general enough" error seen in
+  some client use-cases
 
 
 0.2.3
