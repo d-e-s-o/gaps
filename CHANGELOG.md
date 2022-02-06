@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Implemented `Debug` for `GapIter`
+
+
 0.3.0
 -----
 - Moved `Copied` type from `RangeGappable::gaps` return type to

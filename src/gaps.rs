@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2022 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use std::collections::btree_map::Range as BTreeMapRange;
@@ -22,6 +22,7 @@ use crate::Inc;
 
 
 /// An iterator over the gaps in a sequence represented by an iterator.
+#[derive(Debug)]
 pub struct GapIter<I, T> {
   /// The iterator that we wrap.
   iter: Option<I>,
@@ -40,6 +41,12 @@ where
   I: Iterator<Item = T>,
   T: Copy + Ord + Inc,
 {
+  /// Create a new `GapIter` wrapping the provided iterator and yielding
+  /// ranges identifying the gaps between the elements, if any.
+  ///
+  /// # Notes
+  /// - the provided iterator is assumed to yield elements in ascending
+  ///   order
   pub fn new(iter: I, start: Bound<T>, end: Bound<T>) -> Self {
     debug_assert!(start_le_end(&start, &end));
 
@@ -125,7 +132,7 @@ where
 /// between ordered elements yielded by an iterator.
 ///
 /// E.g., given an ordered set {1, 3, 4}, the gaps in the range
-/// `0..=6` would be: `[0..1, 2..3, 5..6]`.
+/// `0..=6` would be: `[0..1, 2..3, 5..=6]`.
 ///
 /// ```rust
 /// use std::ops::Bound;
@@ -139,6 +146,8 @@ where
 /// assert_eq!(gaps.next(), None);
 /// ```
 pub trait Gappable<I, T> {
+  /// Create a new [`GapIter`] that yields ranges identifying the gaps
+  /// in a certain range of a collection.
   fn gaps<R>(self, range: R) -> GapIter<I, T>
   where
     R: RangeBounds<T>;
@@ -178,8 +187,11 @@ where
 /// assert_eq!(gaps.next(), None);
 /// ```
 pub trait RangeGappable<'s, T> {
+  /// The type of the wrapped iterator.
   type Iter;
 
+  /// Create a new [`GapIter`] that yields ranges identifying the gaps
+  /// in a certain range of a collection.
   fn gaps<R>(&'s self, range: R) -> GapIter<Self::Iter, T>
   where
     R: RangeBounds<T>;
