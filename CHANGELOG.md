@@ -1,6 +1,6 @@
 Unreleased
 ----------
-- Implemented `Debug` for `GapIter`
+- Implemented `Clone` and `Debug` for `GapIter`
 
 
 0.3.0

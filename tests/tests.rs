@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2022 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use std::collections::BTreeMap;
@@ -239,6 +239,28 @@ fn iterator_gap_iteration() {
       (Excluded(99), Unbounded),
     ]
   );
+}
+
+/// Check that we can clone a [`GapIter`] object and iteration still
+/// works as expected.
+#[test]
+fn gap_iterator_cloning() {
+  let set = btreeset! {
+    1usize,
+    2,
+    4,
+    7,
+  };
+
+  let mut it1 = set.gaps(1..=7);
+  assert_eq!(it1.next().unwrap(), (Excluded(2), Excluded(4)));
+
+  let mut it2 = it1.clone();
+  assert_eq!(it1.next().unwrap(), (Excluded(4), Excluded(7)));
+  assert_eq!(it2.next().unwrap(), (Excluded(4), Excluded(7)));
+
+  assert_eq!(it1.next(), None);
+  assert_eq!(it2.next(), None);
 }
 
 #[test]

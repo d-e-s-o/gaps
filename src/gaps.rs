@@ -22,7 +22,7 @@ use crate::Inc;
 
 
 /// An iterator over the gaps in a sequence represented by an iterator.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GapIter<I, T> {
   /// The iterator that we wrap.
   iter: Option<I>,
