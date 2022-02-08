@@ -48,8 +48,6 @@ where
   /// - the provided iterator is assumed to yield elements in ascending
   ///   order
   pub fn new(iter: I, start: Bound<T>, end: Bound<T>) -> Self {
-    debug_assert!(start_le_end(&start, &end));
-
     Self {
       iter: Some(iter),
       start,

@@ -1,6 +1,7 @@
 Unreleased
 ----------
 - Implemented `Clone` and `Debug` for `GapIter`
+- Removed overly strong (debug) assertion from `GapIter::new`
 
 
 0.3.0
