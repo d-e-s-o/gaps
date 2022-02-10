@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.3.1
+-----
 - Implemented `Clone` and `Debug` for `GapIter`
 - Removed overly strong (debug) assertion from `GapIter::new`
 - Added categories and keywords to `Cargo.toml`
