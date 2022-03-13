@@ -210,29 +210,17 @@ fn set_gap_iteration_3() {
 fn iterator_gap_iteration() {
   let mut r = BTreeMap::<usize, &str>::new();
   assert_eq!(
-    r.iter()
-      .map(|(x, _)| x)
-      .copied()
-      .gaps(0..=0)
-      .collect::<Vec<_>>(),
+    r.keys().copied().gaps(0..=0).collect::<Vec<_>>(),
     vec![(Included(0), Included(0))]
   );
 
   r.extend(btreemap! { 1 => "foo", 99 => "bar" });
   assert_eq!(
-    r.iter()
-      .map(|(x, _)| x)
-      .copied()
-      .gaps(0..2)
-      .collect::<Vec<_>>(),
+    r.keys().copied().gaps(0..2).collect::<Vec<_>>(),
     vec![(Included(0), Excluded(1))]
   );
   assert_eq!(
-    r.iter()
-      .map(|(x, _)| x)
-      .copied()
-      .gaps(0..)
-      .collect::<Vec<_>>(),
+    r.keys().copied().gaps(0..).collect::<Vec<_>>(),
     vec![
       (Included(0), Excluded(1)),
       (Excluded(1), Excluded(99)),
