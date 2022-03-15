@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Switched to using GitHub Actions as CI provider
+
+
 0.3.1
 -----
 - Implemented `Clone` and `Debug` for `GapIter`
