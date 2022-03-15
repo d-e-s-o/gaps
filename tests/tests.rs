@@ -206,6 +206,7 @@ fn set_gap_iteration_3() {
   );
 }
 
+/// Check that we can iterate over gaps as produced by a [`Gappable`].
 #[test]
 fn iterator_gap_iteration() {
   let mut r = BTreeMap::<usize, &str>::new();
@@ -233,11 +234,11 @@ fn iterator_gap_iteration() {
 /// works as expected.
 #[test]
 fn gap_iterator_cloning() {
-  let set = btreeset! {
-    1usize,
-    2,
-    4,
-    7,
+  let set = btreemap! {
+    1usize => (),
+    2 => (),
+    4 => (),
+    7 => (),
   };
 
   let mut it1 = set.gaps(1..=7);
@@ -251,6 +252,7 @@ fn gap_iterator_cloning() {
   assert_eq!(it2.next(), None);
 }
 
+/// Check that bound extraction via [`bounds`] works as expected.
 #[test]
 fn extract_bounds() {
   assert_eq!(bounds(&(2..=5)), (Included(2), Included(5)));
